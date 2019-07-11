@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Card : MonoBehaviour
+[SerializeField]
+public class Card
 {
-
+    public string name;
+    public string image;
+    public string description;
+    public int value;
 }
