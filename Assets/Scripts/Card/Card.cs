@@ -3,9 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [SerializeField]
-public class Card
+public class Card : Object
 {
-    public string name;
+    public new string name = "New Card";
+    public string image;
+    public string description = "";
+    public int value = 0;
+}
+
+public class CardItem : ScriptableObject
+{
+    public new string name;
     public string image;
     public string description;
     public int value;

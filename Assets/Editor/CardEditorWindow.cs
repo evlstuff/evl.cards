@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Windows;
 using EditorEnums;
 
 public class CardEditorWindow : EditorWindow
 {
-    public Card card;
     bool isNew; // todo: support setting saved card and update values
+    string output;
+
+    CardItem SelectedCard;
+
+    string Name = "New Card";
+    string Image;
+    string Description = "";
+    int Value = 0;
 
     [MenuItem ("Window/Card Editor")]
     static void Init()
@@ -15,18 +23,82 @@ public class CardEditorWindow : EditorWindow
         EditorWindow.GetWindow(typeof(CardEditorWindow));
     }
 
-    void ClearCard()
-    {
-        card = new Card();
-        isNew = true;
-    }
-
     private void OnEnable()
     {
-        if (card == null)
-        {
-            ClearCard();
+       
+    }
+
+    void ClearCard()
+    {
+        SetData();
+    }
+
+    void SetData(CardItem card = null) {
+        Name = card == null ? "" : card.name;
+        Image = card == null ? null : card.image;
+        Description = card == null ? null : card.description;
+        Value = card == null ? 0 : card.value;
+
+        isNew = card == null;
+        SelectedCard = isNew ? null : SelectedCard;
+        output = "";
+    }
+
+    bool ValidateCard() {
+        if (Name == null || Name == "") {
+            output = "Name is required";
+            return false;
         }
+
+        if (Image == null || Image == "")
+        {
+            output = "Image is required";
+            return false;
+        }
+
+        return true;
+    }
+
+    CardItem GetCardData() {
+        CardItem asset = ScriptableObject.CreateInstance<CardItem>();
+        asset.name = Name;
+        asset.image = Image;
+        asset.description = Description;
+        asset.value = Value;
+
+        return asset;
+    }
+
+    void SaveCard() {
+        bool isValid = ValidateCard();
+
+        if (!isValid) { return; }
+
+        CardItem asset = GetCardData();
+        string path = "Assets/Data/" + asset.name + ".asset";
+        bool exists = File.Exists(path);
+
+        if (exists) {
+            output = "Card with this name already exist";
+            return;
+        }
+
+        AssetDatabase.CreateAsset(asset, path);
+        AssetDatabase.SaveAssets();
+
+        ClearCard();
+    }
+    
+    void UpdateCard() {
+        bool isValid = ValidateCard();
+
+        if (!isValid) { return; }
+
+        CardItem asset = GetCardData();
+        AssetDatabase.CreateAsset(asset, "Assets/Data/" + asset.name + ".asset");
+        AssetDatabase.SaveAssets();
+
+        ClearCard();
     }
 
     void StartNewLine()
@@ -59,10 +131,12 @@ public class CardEditorWindow : EditorWindow
         return res;
     }
 
-    bool DrawButton(string label, bool newLine = false)
+    bool DrawButton(string label, bool enabled = true, bool newLine = false)
     {
         if (newLine) { StartNewLine(); }
+        GUI.enabled = enabled;
         bool res =  GUILayout.Button(label);
+        GUI.enabled = true;
         if (newLine) { CloseLine(); }
 
         return res;
@@ -70,17 +144,33 @@ public class CardEditorWindow : EditorWindow
 
     private void OnGUI()
     {
-        // card = EditorGUILayout.ObjectField(card, typeof(Card), true);
+        GUILayout.Space(20);
+        SelectedCard = (CardItem)EditorGUILayout.ObjectField("Card", SelectedCard, typeof(CardItem), true);
+        if (DrawButton("Confirm")) {
+            SetData(SelectedCard);
+        }
+        GUILayout.Space(10);
 
-        card.name = DrawStringField("Name", card.name, true);
-        card.image =  DrawStringField("Image", card.image, true);
-        card.description = DrawStringField("Description", card.description, true);
-        card.value = DrawIntField("Value", card.value, true);
+        Name = DrawStringField("Name", Name, true);
+        Image =  DrawStringField("Image", Image, true);
+        Description = DrawStringField("Description", Description, true);
+        Value = DrawIntField("Value", Value, true);
+
+        GUILayout.Space(10);
+        StartNewLine();
+        GUIStyle style = new GUIStyle(GUI.skin.label);
+        style.normal.textColor = Color.red;
+        GUILayout.Label(output, style);
+        CloseLine();
 
         StartNewLine();
-        if (DrawButton(isNew ? "Add Card" : "Update Card"))
+        if (DrawButton("Update Card", !isNew))
         {
-            Debug.Log((isNew ? "Add Card" : "Update Card") + " => " + card.name);
+            UpdateCard();
+        }
+        if (DrawButton("Save Card"))
+        {
+            SaveCard();
         }
         if (DrawButton("Clear Card"))
         {
