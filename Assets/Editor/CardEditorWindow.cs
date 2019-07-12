@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.Windows;
 using EditorEnums;
+using EditorUtilities;
 
 public class CardEditorWindow : EditorWindow
 {
     bool isNew; // todo: support setting saved card and update values
     string output;
+    string Path;
+    string defaultPath = "Assets/Data/";
 
     CardItem SelectedCard;
 
@@ -17,15 +20,18 @@ public class CardEditorWindow : EditorWindow
     string Description = "";
     int Value = 0;
 
-    [MenuItem ("Window/Card Editor")]
+    [MenuItem ("Window/Card/Card Editor")]
     static void Init()
     {
-        EditorWindow.GetWindow(typeof(CardEditorWindow));
+        EditorWindow.GetWindow(typeof(CardEditorWindow), false, "Card Editor");
     }
 
     private void OnEnable()
     {
-       
+        if (Path == null || Path == "") {
+            Path = defaultPath;
+        }
+        ClearCard();
     }
 
     void ClearCard()
@@ -40,11 +46,10 @@ public class CardEditorWindow : EditorWindow
         Value = card == null ? 0 : card.value;
 
         isNew = card == null;
-        SelectedCard = isNew ? null : SelectedCard;
         output = "";
     }
 
-    bool ValidateCard() {
+    bool Validate() {
         if (Name == null || Name == "") {
             output = "Name is required";
             return false;
@@ -59,6 +64,15 @@ public class CardEditorWindow : EditorWindow
         return true;
     }
 
+    void ValidatePath()
+    {
+        bool isValid = AssetDatabase.IsValidFolder(Path);
+
+        if (!isValid) {
+            output = Path + " is not valid";
+        }
+    }
+
     CardItem GetCardData() {
         CardItem asset = ScriptableObject.CreateInstance<CardItem>();
         asset.name = Name;
@@ -70,12 +84,12 @@ public class CardEditorWindow : EditorWindow
     }
 
     void SaveCard() {
-        bool isValid = ValidateCard();
+        bool isValid = Validate();
 
         if (!isValid) { return; }
 
         CardItem asset = GetCardData();
-        string path = "Assets/Data/" + asset.name + ".asset";
+        string path = Path + asset.name + ".asset";
         bool exists = File.Exists(path);
 
         if (exists) {
@@ -90,92 +104,86 @@ public class CardEditorWindow : EditorWindow
     }
     
     void UpdateCard() {
-        bool isValid = ValidateCard();
+        bool isValid = Validate();
 
         if (!isValid) { return; }
+        if (SelectedCard == null) { return; }
+
+        string path = AssetDatabase.GetAssetPath(SelectedCard);
 
         CardItem asset = GetCardData();
-        AssetDatabase.CreateAsset(asset, "Assets/Data/" + asset.name + ".asset");
+        AssetDatabase.CreateAsset(asset, path);
         AssetDatabase.SaveAssets();
 
         ClearCard();
     }
 
-    void StartNewLine()
+    void DeleteCard()
     {
-        GUILayout.BeginHorizontal();
-    }
+        if (SelectedCard == null) { return;  }
 
-    void CloseLine()
-    {
-        GUILayout.EndHorizontal();
-    }
+        string path = AssetDatabase.GetAssetPath(SelectedCard);
+        bool exists = File.Exists(path);
 
-    string DrawStringField(string label, string value, bool newLine = false)
-    {
-        if (newLine) { StartNewLine(); }
-        GUILayout.Label(label);
-        string res = GUILayout.TextField(value);
-        if (newLine) { CloseLine(); }
+        if (!exists) {
+            output = "There is no such card file";
+            return;
+        }
 
-        return res;
-    }
+        AssetDatabase.DeleteAsset(path);
 
-    int DrawIntField(string label, int value, bool newLine = false)
-    {
-        if(newLine) { StartNewLine(); }
-        GUILayout.Label(label);
-        int res = EditorGUILayout.IntField(value);
-        if (newLine) { CloseLine(); }
-
-        return res;
-    }
-
-    bool DrawButton(string label, bool enabled = true, bool newLine = false)
-    {
-        if (newLine) { StartNewLine(); }
-        GUI.enabled = enabled;
-        bool res =  GUILayout.Button(label);
-        GUI.enabled = true;
-        if (newLine) { CloseLine(); }
-
-        return res;
+        SelectedCard = null;
+        ClearCard();
     }
 
     private void OnGUI()
     {
         GUILayout.Space(20);
         SelectedCard = (CardItem)EditorGUILayout.ObjectField("Card", SelectedCard, typeof(CardItem), true);
-        if (DrawButton("Confirm")) {
+        if (GUIWindow.DrawButton("Confirm", SelectedCard != null)) {
             SetData(SelectedCard);
         }
         GUILayout.Space(10);
 
-        Name = DrawStringField("Name", Name, true);
-        Image =  DrawStringField("Image", Image, true);
-        Description = DrawStringField("Description", Description, true);
-        Value = DrawIntField("Value", Value, true);
+        Name = GUIWindow.DrawStringField("Name", Name, true);
+        Image = GUIWindow.DrawStringField("Image", Image, true);
+        Description = GUIWindow.DrawStringField("Description", Description, true);
+        Value = GUIWindow.DrawIntField("Value", Value, true);
 
         GUILayout.Space(10);
-        StartNewLine();
+        GUIWindow.StartNewLine();
         GUIStyle style = new GUIStyle(GUI.skin.label);
         style.normal.textColor = Color.red;
         GUILayout.Label(output, style);
-        CloseLine();
+        GUIWindow.CloseLine();
 
-        StartNewLine();
-        if (DrawButton("Update Card", !isNew))
+        GUIWindow.StartNewLine();
+        GUI.enabled = false;
+        Path = GUIWindow.DrawStringField("Path", Path);
+        GUI.enabled = true;
+        if (GUIWindow.DrawButton("Browse")) {
+            Path = FSystem.ToRelativePath(EditorUtility.OpenFolderPanel("Data Folder", Path, ""));
+            ValidatePath();
+        }
+        GUIWindow.CloseLine();
+
+        GUIWindow.StartNewLine();
+        if (GUIWindow.DrawButton("Update Card", !isNew))
         {
             UpdateCard();
         }
-        if (DrawButton("Save Card"))
+        if (GUIWindow.DrawButton("Save Card"))
         {
             SaveCard();
         }
-        if (DrawButton("Clear Card"))
+        if (GUIWindow.DrawButton("Clear Card"))
         {
             ClearCard();
         }
-        CloseLine();
+        if (GUIWindow.DrawButton("Delete Card", !isNew))
+        {
+            DeleteCard();
+        }
+        GUIWindow.CloseLine();
     }
 }

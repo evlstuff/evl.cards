@@ -18,3 +18,8 @@ public class CardItem : ScriptableObject
     public string description;
     public int value;
 }
+
+public class CardItemsBundle : ScriptableObject
+{
+    public CardItem[] cards;
+}
