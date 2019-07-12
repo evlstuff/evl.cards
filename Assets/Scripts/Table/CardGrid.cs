@@ -26,7 +26,7 @@ public class CardGrid : MonoBehaviour, IDropHandler
         Vector2 cardProportions = CardView.proportions;
         Rect rect = GetComponent<RectTransform>().rect;
         int cellCount = Mathf.Max(maxCards, 1);
-        float freeWidth = rect.width - ((cellCount - 1) * spacing);
+        float freeWidth = rect.width - ((cellCount) * spacing);
         float cellWidth = freeWidth / cellCount;
         float freeHeight = rect.height - (spacing);
         float cellHeight = Mathf.Min((cellWidth / cardProportions.x) * cardProportions.y, freeHeight); // check that height fit container
