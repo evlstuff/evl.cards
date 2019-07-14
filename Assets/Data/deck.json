@@ -1,0 +1,28 @@
+{
+	"cards": [
+		{
+			"title": "Card",
+			"image": "cerd.svg",
+			"value": 1,
+			"description": ""
+		},
+		{
+			"title": "Card 1",
+			"image": "cerd1.svg",
+			"value": 1,
+			"description": ""
+		},
+		{
+			"title": "Card 2",
+			"image": "cerd2.svg",
+			"value": 2,
+			"description": ""
+		},
+		{
+			"title": "Card 3",
+			"image": "cerd3.svg",
+			"value": 2,
+			"description": ""
+		}
+	]
+}

@@ -3,9 +3,135 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 namespace EditorUtilities
 {
+    public class DeckUtility
+    {
+        public static string LoadJson(string path)
+        {
+            bool exists = File.Exists(path);
+
+            if (exists)
+            {
+                return File.ReadAllText(path);
+            }
+
+            return null;
+        }
+
+        static public Deck FromJson(string json)
+        {
+            return JsonUtility.FromJson<Deck>(json);
+        }
+
+        static public Deck FromJsonPath(string path)
+        {
+            string json = LoadJson(path);
+
+            if (json == null) { return null; }
+
+            return FromJson(json);
+        }
+
+        static public bool CreateDeckItem(DeckItem deck, string path)
+        {
+            string filePath = path + "deck.asset";
+            bool exists = File.Exists(filePath);
+
+            if (exists)
+            {
+                AssetDatabase.DeleteAsset(filePath);
+            }
+
+            DeckItem asset = ScriptableObject.CreateInstance<DeckItem>();
+            asset.name = deck.name != null ? deck.name : "Deck";
+            asset.cards = deck.cards;
+
+            AssetDatabase.CreateAsset(asset, filePath);
+            AssetDatabase.SaveAssets();
+
+            return true;
+        }
+
+        static public bool CreateAssetBundle(string path, BuildAssetBundleOptions options, BuildTarget target) {
+            string bundlePath = path + target.ToString();
+
+            if (Directory.Exists(bundlePath))
+            {
+                Directory.Delete(bundlePath, true);
+            }
+
+            Directory.CreateDirectory(bundlePath);
+
+            BuildPipeline.BuildAssetBundles(bundlePath, options, target);
+            return true;
+        }
+
+        static public Deck LoadAssetBundle(string path) {
+            AssetBundle.UnloadAllAssetBundles(true);
+            AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
+            if (assetBundle == null)
+            {
+                Debug.Log("Failed to load AssetBundle!");
+                return null;
+            }
+
+            string[] assetNames = assetBundle.GetAllAssetNames();
+            Debug.Log("Asset Bundle Name: " + assetBundle.name + " has " + assetNames.Length.ToString() + " assets");
+
+            CardItem card = assetBundle.LoadAsset<CardItem>(assetNames[0]);
+            if (card != null) {
+                Debug.Log(card.name);
+            } else
+            {
+                Debug.Log("Cant load " + assetNames[0]);
+            }
+            Deck deck = new Deck();
+            //deck.cards = cards;
+
+            return deck;
+        }
+    }
+
+    public class CardUtility
+    {
+        static public bool CreateCardItem(Card card, string path, string bundleName)
+        {
+            string bundlePath = Path.Combine(path, bundleName + "/");
+            string full = Path.GetFullPath(bundlePath);
+
+            if (!Directory.Exists(full)) {
+                Directory.CreateDirectory(full);
+            }
+
+            string pattern = @"\s";
+            string name = Regex.Replace(card.title, pattern, "_").ToLower();
+            string filePath = bundlePath + name + ".asset";
+            bool exists = File.Exists(filePath);
+
+            if (exists)
+            {
+                AssetDatabase.DeleteAsset(filePath);
+            }
+
+            CardItem asset = ScriptableObject.CreateInstance<CardItem>();
+            // asset.name = name;
+            asset.title = card.title;
+            asset.image = card.image;
+            asset.description = card.description;
+            asset.value = card.value;
+
+            AssetDatabase.CreateAsset(asset, filePath);
+            AssetDatabase.SaveAssets();
+
+            AssetImporter.GetAtPath(filePath).SetAssetBundleNameAndVariant(bundleName, "");
+
+            return true;
+        }
+    }
+
     public class GUIWindow : EditorWindow
     {
         public static void StartNewLine()
@@ -52,6 +178,14 @@ namespace EditorUtilities
 
     public class FSystem
     {
+        public static bool ValidateAssetPath(string path)
+        {
+            bool isValid = Directory.Exists(path);
+
+            if (!isValid) { Debug.Log(path + " is not valid"); }
+
+            return isValid;
+        }
         public static string ToRelativePath(string filePath)
         {
             Uri fileUri = new Uri(filePath);

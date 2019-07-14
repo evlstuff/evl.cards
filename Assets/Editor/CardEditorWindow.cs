@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Windows;
-using EditorEnums;
 using EditorUtilities;
 
 public class CardEditorWindow : EditorWindow
@@ -40,7 +39,7 @@ public class CardEditorWindow : EditorWindow
     }
 
     void SetData(CardItem card = null) {
-        Name = card == null ? "" : card.name;
+        Name = card == null ? "" : card.title;
         Image = card == null ? null : card.image;
         Description = card == null ? null : card.description;
         Value = card == null ? 0 : card.value;
@@ -75,7 +74,7 @@ public class CardEditorWindow : EditorWindow
 
     CardItem GetCardData() {
         CardItem asset = ScriptableObject.CreateInstance<CardItem>();
-        asset.name = Name;
+        asset.title = Name;
         asset.image = Image;
         asset.description = Description;
         asset.value = Value;
