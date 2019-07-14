@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Windows;
-using EditorEnums;
 using EditorUtilities;
 
 public class CardEditorWindow : EditorWindow
@@ -16,7 +15,7 @@ public class CardEditorWindow : EditorWindow
     CardItem SelectedCard;
 
     string Name = "New Card";
-    string Image;
+    Sprite Image;
     string Description = "";
     int Value = 0;
 
@@ -40,7 +39,7 @@ public class CardEditorWindow : EditorWindow
     }
 
     void SetData(CardItem card = null) {
-        Name = card == null ? "" : card.name;
+        Name = card == null ? "" : card.title;
         Image = card == null ? null : card.image;
         Description = card == null ? null : card.description;
         Value = card == null ? 0 : card.value;
@@ -52,12 +51,6 @@ public class CardEditorWindow : EditorWindow
     bool Validate() {
         if (Name == null || Name == "") {
             output = "Name is required";
-            return false;
-        }
-
-        if (Image == null || Image == "")
-        {
-            output = "Image is required";
             return false;
         }
 
@@ -75,7 +68,7 @@ public class CardEditorWindow : EditorWindow
 
     CardItem GetCardData() {
         CardItem asset = ScriptableObject.CreateInstance<CardItem>();
-        asset.name = Name;
+        asset.title = Name;
         asset.image = Image;
         asset.description = Description;
         asset.value = Value;
@@ -146,7 +139,7 @@ public class CardEditorWindow : EditorWindow
         GUILayout.Space(10);
 
         Name = GUIWindow.DrawStringField("Name", Name, true);
-        Image = GUIWindow.DrawStringField("Image", Image, true);
+        // Image = GUIWindow.DrawStringField("Image", Image, true);
         Description = GUIWindow.DrawStringField("Description", Description, true);
         Value = GUIWindow.DrawIntField("Value", Value, true);
 

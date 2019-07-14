@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[SerializeField]
-public class Card : Object
+[System.Serializable]
+public class Card
 {
-    public new string name = "New Card";
+    public string title = "New Card";
     public string image;
     public string description = "";
     public int value = 0;
 }
 
-public class CardItem : ScriptableObject
+[System.Serializable]
+public class Deck
 {
-    public new string name;
-    public string image;
-    public string description;
-    public int value;
+    public Card[] cards;
 }
 
-public class CardItemsBundle : ScriptableObject
+[System.Serializable]
+public class DeckItem : ScriptableObject
 {
     public CardItem[] cards;
 }
