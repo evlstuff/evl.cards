@@ -15,7 +15,7 @@ public class CardEditorWindow : EditorWindow
     CardItem SelectedCard;
 
     string Name = "New Card";
-    string Image;
+    Sprite Image;
     string Description = "";
     int Value = 0;
 
@@ -51,12 +51,6 @@ public class CardEditorWindow : EditorWindow
     bool Validate() {
         if (Name == null || Name == "") {
             output = "Name is required";
-            return false;
-        }
-
-        if (Image == null || Image == "")
-        {
-            output = "Image is required";
             return false;
         }
 
@@ -145,7 +139,7 @@ public class CardEditorWindow : EditorWindow
         GUILayout.Space(10);
 
         Name = GUIWindow.DrawStringField("Name", Name, true);
-        Image = GUIWindow.DrawStringField("Image", Image, true);
+        // Image = GUIWindow.DrawStringField("Image", Image, true);
         Description = GUIWindow.DrawStringField("Description", Description, true);
         Value = GUIWindow.DrawIntField("Value", Value, true);
 

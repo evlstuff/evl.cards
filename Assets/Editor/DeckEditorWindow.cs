@@ -104,7 +104,12 @@ public class DeckEditorWindow : EditorWindow
         if (GUIWindow.DrawButton("Load Asset Bundle")) {
             string path = EditorUtility.OpenFilePanel("Asset Bundle Folder", assetBundleFolderPath, "");
             DeckUtility.LoadAssetBundle(path);
-            // Debug.Log(deckItem);
+        }
+
+        if (GUIWindow.DrawButton("Delete temp for asset bundle"))
+        {
+            string path = EditorUtility.OpenFilePanel("Asset Bundle Folder", assetBundleFolderPath, "");
+            DeckUtility.DeleteAllAssets(path);
         }
     }
 }

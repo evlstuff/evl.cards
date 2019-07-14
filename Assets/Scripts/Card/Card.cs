@@ -12,15 +12,6 @@ public class Card
 }
 
 [System.Serializable]
-public class CardItem : ScriptableObject
-{
-    public string title;
-    public string image;
-    public string description;
-    public int value;
-}
-
-[System.Serializable]
 public class Deck
 {
     public Card[] cards;

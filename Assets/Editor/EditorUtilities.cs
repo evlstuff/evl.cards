@@ -69,9 +69,14 @@ namespace EditorUtilities
             return true;
         }
 
-        static public Deck LoadAssetBundle(string path) {
+        static public AssetBundle LoadAssetBundleFromFile(string path)
+        {
             AssetBundle.UnloadAllAssetBundles(true);
-            AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
+            return AssetBundle.LoadFromFile(path);
+        }
+
+        static public Deck LoadAssetBundle(string path) {
+            AssetBundle assetBundle = LoadAssetBundleFromFile(path);
             if (assetBundle == null)
             {
                 Debug.Log("Failed to load AssetBundle!");
@@ -81,17 +86,40 @@ namespace EditorUtilities
             string[] assetNames = assetBundle.GetAllAssetNames();
             Debug.Log("Asset Bundle Name: " + assetBundle.name + " has " + assetNames.Length.ToString() + " assets");
 
-            CardItem card = assetBundle.LoadAsset<CardItem>(assetNames[0]);
-            if (card != null) {
-                Debug.Log(card.name);
-            } else
+
+            foreach(string assetName in assetNames)
             {
-                Debug.Log("Cant load " + assetNames[0]);
+                CardItem card = assetBundle.LoadAsset<CardItem>(assetName);
+                if (card != null)
+                {
+                    Debug.Log(card.title + " with value " + card.value);
+                }
+                else
+                {
+                    Debug.Log("Cant load " + assetName);
+                }
             }
+            
             Deck deck = new Deck();
             //deck.cards = cards;
 
             return deck;
+        }
+
+        public static void DeleteAllAssets(string bundlePath)
+        {
+            AssetBundle assetBundle = LoadAssetBundleFromFile(bundlePath);
+
+            if (assetBundle == null)
+            {
+                return;
+            }
+
+            string[] assetNames = assetBundle.GetAllAssetNames();
+            foreach (string assetName in assetNames)
+            {
+                AssetDatabase.DeleteAsset(assetName);
+            }
         }
     }
 
@@ -119,7 +147,6 @@ namespace EditorUtilities
             CardItem asset = ScriptableObject.CreateInstance<CardItem>();
             // asset.name = name;
             asset.title = card.title;
-            asset.image = card.image;
             asset.description = card.description;
             asset.value = card.value;
 
