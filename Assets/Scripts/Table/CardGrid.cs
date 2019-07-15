@@ -11,7 +11,7 @@ public class CardGrid : MonoBehaviour, IDropHandler
     Vector2 cellSpacing;
     float spacing = 12;
 
-    List<GameObject> cards = new List<GameObject>(); // todo: change to Card model
+    public List<Card> cards = new List<Card>(); // todo: change to Card model
 
     public int maxCards = 6;
     public bool canAddCard;
@@ -38,7 +38,7 @@ public class CardGrid : MonoBehaviour, IDropHandler
         canAddCard = maxCards != 0 && maxCards > cards.Count;
     }
 
-    public void RemoveCard(GameObject card)
+    public void RemoveCard(Card card)
     {
         // find and remove
         int index = cards.FindIndex(c => card == c);
@@ -50,12 +50,12 @@ public class CardGrid : MonoBehaviour, IDropHandler
         }
     }
 
-    public bool AddCard(GameObject card)
+    public bool AddCard(Card card)
     {
         if (canAddCard)
         {
             cards.Add(card);
-            card.transform.SetParent(transform);
+
             canAddCard = maxCards > cards.Count;
             return true;
         }

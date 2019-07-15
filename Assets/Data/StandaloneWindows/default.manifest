@@ -1,0 +1,21 @@
+ManifestFileVersion: 0
+CRC: 2479226459
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 172c8d34877781441cb4081d3d5b4131
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: a9a618416733be066e54cb7abea9ae82
+HashAppended: 0
+ClassTypes:
+- Class: 114
+  Script: {fileID: 11500000, guid: 6595ab804a19f7a45af0613c772a7859, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/Data/default/card_2.asset
+- Assets/Data/default/card_3.asset
+- Assets/Data/default/card_1.asset
+- Assets/Data/default/card.asset
+Dependencies: []

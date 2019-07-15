@@ -6,14 +6,43 @@ using UnityEngine.EventSystems;
 public class CardDeckCtrl : MonoBehaviour, IPointerClickHandler
 {
     EventTrigger eventTrigger;
-    public CardGrid activeCardsGrid;
+    CardGrid activeCardsGrid;
+    public List<CardItem> cards;
+    bool hasCards = false;
+
+    private void Start()
+    {
+        activeCardsGrid = GameManager.activeCardsGrid;
+    }
+
+    void GetCards()
+    {
+        CardItem[] deckCards = GameManager.deck.cards;
+
+        cards.AddRange(deckCards);
+
+        hasCards = cards.Count > 0;
+    }
 
     public void OnPointerClick(PointerEventData ev)
     {
-        if (GameManager.cardView != null && activeCardsGrid != null && activeCardsGrid.canAddCard)
+        if (cards == null || cards.Count == 0) {
+            //TODO: do it async at start
+            GetCards();
+        }
+
+        if (activeCardsGrid != null && activeCardsGrid.canAddCard)
         {
-            GameObject card = Instantiate(GameManager.cardView, GameManager.tableLayout);
+            var cardObject = Instantiate(GameManager.cardView, activeCardsGrid.transform);
+            Card card = cardObject.GetComponent<Card>();
+            CardItem cardItem = cards[0];
+
+            card.SetData(cardItem);
+            
             activeCardsGrid.AddCard(card);
+
+            cards.RemoveAt(0);
+            hasCards = cards.Count > 0;
         }
     }
 }
