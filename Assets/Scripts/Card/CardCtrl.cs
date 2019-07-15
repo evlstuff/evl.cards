@@ -8,12 +8,14 @@ public class CardCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 {
     CanvasGroup cGroup;
 
+    [HideInInspector] public Card card;
     [HideInInspector] public CardGrid parentCardGrid;
     [HideInInspector] public int siblingIndex;
     [HideInInspector] public CardGrid possibleCardGrid;
 
     private void Start()
     {
+        card = GetComponent<Card>();
         cGroup = gameObject.AddComponent<CanvasGroup>();
     }
 
@@ -46,8 +48,8 @@ public class CardCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
         if (targetCardGrid != parentCardGrid)
         {
-            parentCardGrid.RemoveCard(gameObject);
-            targetCardGrid.AddCard(gameObject);
+            parentCardGrid.RemoveCard(card);
+            targetCardGrid.AddCard(card);
             siblingIndex = transform.GetSiblingIndex();
         }
         else

@@ -2,23 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Card
+public class Card : MonoBehaviour
 {
-    public string title = "New Card";
-    public string image;
-    public string description = "";
+    public string title;
+    public Sprite image;
+    public string description;
     public int value = 0;
-}
 
-[System.Serializable]
-public class Deck
-{
-    public Card[] cards;
-}
+    public void SetData(Card props = null) {
+        title = props.title;
+        image = props.image;
+        description = props.description;
+        value = props.value;
+    }
 
-[System.Serializable]
-public class DeckItem : ScriptableObject
-{
-    public CardItem[] cards;
+    public void SetData(CardItem props = null)
+    {
+        title = props.title;
+        image = props.image;
+        description = props.description;
+        value = props.value;
+    }
+
+    public CardItem ToItem() {
+        CardItem item = new CardItem();
+
+        item.title = title;
+        item.description = description;
+        item.value = value;
+        item.image = image;
+
+        return item;
+    }
+
+    private void Awake()
+    {
+        
+    }
+
+    private void Start()
+    {
+        
+    }
 }

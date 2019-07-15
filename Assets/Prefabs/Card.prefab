@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6242335155306926056}
   - component: {fileID: 6242335155306926062}
   - component: {fileID: 6242335155306926063}
+  - component: {fileID: 864838667931750666}
   - component: {fileID: -5264531197047810053}
   - component: {fileID: 5526057424226583960}
   m_Layer: 5
@@ -77,6 +78,22 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &864838667931750666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6242335155306926057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03efcb5ff973320498696f0aaaed4cfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  title: 
+  image: {fileID: 0}
+  description: 
+  value: 0
 --- !u!114 &-5264531197047810053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,6 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b911c2094224f4ab0b9edaccd8fa5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  card: {fileID: 0}
   parentCardGrid: {fileID: 0}
   siblingIndex: 0
   possibleCardGrid: {fileID: 0}
