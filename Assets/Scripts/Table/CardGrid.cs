@@ -9,7 +9,7 @@ public class CardGrid : MonoBehaviour, IDropHandler
     [HideInInspector] public GridLayoutGroup gridLayoutGroup;
     Vector2 cellSize;
     Vector2 cellSpacing;
-    float spacing = 12;
+    Vector2 maxCellSpacing = new Vector2(10, 10);
 
     public List<Card> cards = new List<Card>(); // todo: change to Card model
 
@@ -22,20 +22,28 @@ public class CardGrid : MonoBehaviour, IDropHandler
         gridLayoutGroup.childAlignment = TextAnchor.MiddleCenter;
         gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
         gridLayoutGroup.constraintCount = 1;
-        // todo: calculate width and height of the cell item due to a content dimensions
-        Vector2 cardProportions = CardView.proportions;
-        Rect rect = GetComponent<RectTransform>().rect;
-        int cellCount = Mathf.Max(maxCards, 1);
-        float freeWidth = rect.width - ((cellCount) * spacing);
-        float cellWidth = freeWidth / cellCount;
-        float freeHeight = rect.height - (spacing);
-        float cellHeight = Mathf.Min((cellWidth / cardProportions.x) * cardProportions.y, freeHeight); // check that height fit container
-        cellWidth = (cellHeight / cardProportions.y) * cardProportions.x; // make sure that proportions are saved
-
-        cellSize = new Vector2(cellWidth, cellHeight);
-        cellSpacing = new Vector2(spacing, 0);
 
         canAddCard = maxCards != 0 && maxCards > cards.Count;
+    }
+
+    void UpdateUI()
+    {
+        cellSize = UIManager.cardSize;
+
+        if (cellSize == null) { return; }
+
+        Rect rect = GetComponent<RectTransform>().rect;
+
+        float freeWidth = rect.width - (cellSize.x * maxCards);
+        float freeHeight = rect.height - cellSize.y; // Only one card row
+
+        float hSpacing = Mathf.Min(freeWidth / 2, maxCellSpacing.x);
+        float vSpacing = Mathf.Min(freeHeight / 2, maxCellSpacing.y);
+
+        cellSpacing = new Vector2(hSpacing, vSpacing);
+
+        gridLayoutGroup.cellSize = cellSize;
+        gridLayoutGroup.spacing = cellSpacing;
     }
 
     public void RemoveCard(Card card)
@@ -78,7 +86,6 @@ public class CardGrid : MonoBehaviour, IDropHandler
 
     void Start()
     {
-        gridLayoutGroup.cellSize = cellSize;
-        gridLayoutGroup.spacing = cellSpacing;
+        UpdateUI();
     }
 }
