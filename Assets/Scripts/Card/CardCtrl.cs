@@ -23,7 +23,7 @@ public class CardCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
         siblingIndex = transform.GetSiblingIndex();
         parentCardGrid = transform.parent.GetComponent<CardGrid>();
-        transform.SetParent(GameManager.tableLayout); // put the card to layout
+        transform.SetParent(UIManager.GetMainLayout()); // put the card to layout
 
         if (cGroup != null)
         {
@@ -38,7 +38,6 @@ public class CardCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     public void OnEndDrag(PointerEventData ev)
     {
-
         CardGrid targetCardGrid = possibleCardGrid == null || !possibleCardGrid.canAddCard ? parentCardGrid : possibleCardGrid;
 
         if (targetCardGrid != null)

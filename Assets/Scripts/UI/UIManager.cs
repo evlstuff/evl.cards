@@ -7,6 +7,12 @@ public class UIManager : MonoBehaviour
 {
     static UIManager _this;
 
+    public GameObject cardPrefab;
+    public GameObject deckPrefab;
+
+    public Transform mainLayout;
+    public CardGrid tableGrid;
+
     [ContextMenuItem("Update", "UpdateEditLayout")]
     public Transform targetLayout;
 
@@ -14,6 +20,26 @@ public class UIManager : MonoBehaviour
     public Vector2 cardProportions;
     [ContextMenuItem("Update", "UpdateCardSize")]
     public static Vector2 cardSize;
+
+    public static GameObject GetCardPrefab()
+    {
+        return _this.cardPrefab;
+    }
+
+    public static GameObject GetDeckPrefab()
+    {
+        return _this.deckPrefab;
+    }
+
+    public static CardGrid GetTableGrid()
+    {
+        return _this.tableGrid;
+    }
+
+    public static Transform GetMainLayout()
+    {
+        return _this.mainLayout;
+    }
 
     Vector2 GetElementScale(UIElement elem)
     {
@@ -123,11 +149,5 @@ public class UIManager : MonoBehaviour
         UpdateCardSize();
 
         DontDestroyOnLoad(_this);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

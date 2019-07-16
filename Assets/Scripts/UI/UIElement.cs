@@ -5,12 +5,17 @@ using UnityEngine.UI;
 
 public enum ElementType
 {
-    Container, Spacing,
+    Container, Spacing, Element,
 }
 
 public enum ElementDirection
 {
-    Horizontal, Vertical,
+    None, Horizontal, Vertical,
+}
+
+public enum ElementSize
+{
+    Default, Contain, Cover,
 }
 
 public class UIElement : MonoBehaviour
@@ -18,6 +23,8 @@ public class UIElement : MonoBehaviour
     public float scale;
     public ElementType type;
     public ElementDirection direction;
+    public Vector2 proportions;
+    public ElementSize size;
 
     RectTransform rectT;
 
@@ -29,6 +36,28 @@ public class UIElement : MonoBehaviour
     private void Awake()
     {
         Init();
+    }
+
+    private void Start()
+    {
+        CheckSize();
+    }
+
+    private void Update()
+    {
+        CheckSize();
+    }
+
+    void CheckSize() {
+        switch (size)
+        {
+            case ElementSize.Contain:
+                {
+                    FitParent();
+                    NormalizeProportions();
+                    break;
+                }
+        }
     }
 
     void SetSize(Vector2 size)
@@ -44,6 +73,29 @@ public class UIElement : MonoBehaviour
         float height = size.y >= 0 ? size.y : defaultSize.y;
 
         rectT.sizeDelta = new Vector2(width, height);
+    }
+
+    public void FitParent() {
+        RectTransform parent = transform.parent.GetComponent<RectTransform>();
+
+        if (parent.IsNullOrEmpty()) { return; }
+        Vector2 currentSize = rectT.sizeDelta;
+        Vector2 parentSize = parent.sizeDelta;
+
+        if (currentSize.x > parentSize.x || currentSize.y > parentSize.y)
+        {
+            SetSize(parentSize);
+            NormalizeProportions();
+        } 
+    }
+
+    public void NormalizeProportions()
+    {
+        if (rectT.IsNullOrEmpty() || proportions.IsNullOrEmpty()) { return; }
+
+        float width = rectT.sizeDelta.x;
+        float height = (width / proportions.x) * proportions.y;
+        SetSize(new Vector2(width, height));
     }
 
     public void SetUnitDimensions(Vector2 unit)
