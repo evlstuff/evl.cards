@@ -60,13 +60,14 @@ public class Editor
 
         string[] assetNames = assetBundle.GetAllAssetNames();
 
-        DeckItem deck = new DeckItem();
+        DeckItem deck = ScriptableObject.CreateInstance<DeckItem>();
         List<CardItem> cards = new List<CardItem>();
         foreach (string assetName in assetNames)
         {
             CardItem card = assetBundle.LoadAsset<CardItem>(assetName);
 
-            if (card != null) {
+            if (card != null)
+            {
                 cards.Add(card);
             }
         }
