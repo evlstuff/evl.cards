@@ -4,19 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject _cardView;
-    public GameObject _deckPrefab;
-    public Transform _tableLayout;
-    public CardGrid _activeCardsGrid;
-
     static GameManager _this;
-
-    public static GameObject deckPrefab;
-    public static GameObject cardView;
-
-    public static Transform tableLayout;
-    public static CardGrid activeCardsGrid;
-
     public static DeckItem deck;
 
     private void Awake()
@@ -28,10 +16,6 @@ public class GameManager : MonoBehaviour
         }
 
         _this = this;
-        cardView = _cardView;
-        tableLayout = _tableLayout;
-        deckPrefab = _deckPrefab;
-        activeCardsGrid = _activeCardsGrid;
 
         DontDestroyOnLoad(_this);
     }

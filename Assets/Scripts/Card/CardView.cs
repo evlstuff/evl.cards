@@ -5,16 +5,37 @@ using UnityEngine.UI;
 
 public class CardView : MonoBehaviour
 {
+    Card card;
     public static Vector2 proportions = new Vector2(2, 3);
-    Image image;
+    public Image image;
+    public Text value;
+    public Text title;
+    public Text description;
 
-    // Start is called before the first frame update
+    private void Awake()
+    {
+        card = GetComponent<Card>();
+    }
+
     void Start()
     {
-        image = GetComponent<Image>();
         if (image != null)
         {
             image.color = Random.ColorHSV();
+        }
+
+        if (card == null) return;
+
+        if (!title.IsNullOrEmpty() && !card.title.IsNullOrEmpty()) {
+            title.text = card.title; 
+        }
+        if (!description.IsNullOrEmpty() && !card.description.IsNullOrEmpty())
+        {
+            description.text = card.description;
+        }
+        if (!value.IsNullOrEmpty() && !card.value.IsNullOrEmpty())
+        {
+            value.text = card.value.ToString();
         }
     }
 }

@@ -5,14 +5,22 @@ using UnityEngine.EventSystems;
 
 public class CardDeckCtrl : MonoBehaviour, IPointerClickHandler
 {
+    CardGrid cardGrid;
     EventTrigger eventTrigger;
-    CardGrid activeCardsGrid;
+    CardGrid tableGrid;
+
     public List<CardItem> cards;
     bool hasCards = false;
 
+    private void Awake()
+    {
+        cardGrid = GetComponent<CardGrid>();
+    }
+
     private void Start()
     {
-        activeCardsGrid = GameManager.activeCardsGrid;
+        tableGrid = UIManager.GetTableGrid();
+        Instantiate(UIManager.GetDeckPrefab(), transform);
     }
 
     void GetCards()
@@ -31,15 +39,15 @@ public class CardDeckCtrl : MonoBehaviour, IPointerClickHandler
             GetCards();
         }
 
-        if (activeCardsGrid != null && activeCardsGrid.canAddCard)
+        if (tableGrid != null && tableGrid.canAddCard)
         {
-            var cardObject = Instantiate(GameManager.cardView, activeCardsGrid.transform);
+            var cardObject = Instantiate(UIManager.GetCardPrefab(), tableGrid.transform);
             Card card = cardObject.GetComponent<Card>();
             CardItem cardItem = cards[0];
 
             card.SetData(cardItem);
-            
-            activeCardsGrid.AddCard(card);
+
+            tableGrid.AddCard(card);
 
             cards.RemoveAt(0);
             hasCards = cards.Count > 0;
