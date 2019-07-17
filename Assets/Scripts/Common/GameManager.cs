@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     static GameManager _this;
     public static DeckItem deck;
 
+    public static bool isCardGrabbed;
+
     private void Awake()
     {
         if (_this != null && this != _this)

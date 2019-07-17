@@ -3,28 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum ElementType
-{
-    Container, Spacing, Element,
-}
-
-public enum ElementDirection
-{
-    None, Horizontal, Vertical,
-}
-
-public enum ElementSize
-{
-    Default, Contain, Cover,
-}
-
 public class UIElement : MonoBehaviour
 {
     public float scale;
     public ElementType type;
     public ElementDirection direction;
     public Vector2 proportions;
-    public ElementSize size;
+    public ElementSizes size;
 
     RectTransform rectT;
 
@@ -51,7 +36,7 @@ public class UIElement : MonoBehaviour
     void CheckSize() {
         switch (size)
         {
-            case ElementSize.Contain:
+            case ElementSizes.Contain:
                 {
                     FitParent();
                     NormalizeProportions();

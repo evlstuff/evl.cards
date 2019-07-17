@@ -4,20 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CardGrid : MonoBehaviour, IDropHandler
+public class CardGrid : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [HideInInspector] public GridLayoutGroup gridLayoutGroup;
     Vector2 cellSize;
     Vector2 cellSpacing;
     Vector2 maxCellSpacing = new Vector2(10, 10);
+    Image image;
 
     public List<Card> cards = new List<Card>(); // todo: change to Card model
 
     public int maxCards = 6;
     public bool canAddCard;
+    public bool isActive;
+    public bool isHover;
 
     private void Awake()
     {
+        image = GetComponent<Image>();
+
         gridLayoutGroup = gameObject.AddComponent<GridLayoutGroup>();
         gridLayoutGroup.childAlignment = TextAnchor.MiddleCenter;
         gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
@@ -26,7 +31,7 @@ public class CardGrid : MonoBehaviour, IDropHandler
         canAddCard = maxCards != 0 && maxCards > cards.Count;
     }
 
-    void UpdateUI()
+    void UpdateGridSize()
     {
         cellSize = UIManager.cardSize;
 
@@ -44,6 +49,11 @@ public class CardGrid : MonoBehaviour, IDropHandler
 
         gridLayoutGroup.cellSize = cellSize;
         gridLayoutGroup.spacing = cellSpacing;
+    }
+
+    public void CheckStatus()
+    {
+        isActive = isHover && GameManager.isCardGrabbed && canAddCard;
     }
 
     public void RemoveCard(Card card)
@@ -71,6 +81,16 @@ public class CardGrid : MonoBehaviour, IDropHandler
         return false;
     }
 
+    public void OnPointerEnter(PointerEventData ev)
+    {
+        isHover = true;
+    }
+
+    public void OnPointerExit(PointerEventData ev)
+    {
+        isHover = false;
+    }
+
     public void OnDrop(PointerEventData ev)
     {
         GameObject selectedObject = ev.pointerDrag;
@@ -84,8 +104,32 @@ public class CardGrid : MonoBehaviour, IDropHandler
         }
     }
 
+    void UpdateColor()
+    {
+        if (image == null) { return; }
+
+        if (isActive)
+        {
+            image.color = UIManager.GetColor(UIColor.ActivePanel);
+            return;
+        }
+
+        if (GameManager.isCardGrabbed && canAddCard) {
+            image.color = UIManager.GetColor(UIColor.HighlightPanel);
+            return;
+        }
+
+        image.color = UIManager.GetColor(UIColor.DefaultPanel);
+    }
+
     void Start()
     {
-        UpdateUI();
+        UpdateGridSize();
+    }
+
+    private void Update()
+    {
+        CheckStatus();
+        UpdateColor();
     }
 }
