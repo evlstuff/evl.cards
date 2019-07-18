@@ -7,15 +7,28 @@ public class UIManager : MonoBehaviour
 {
     static UIManager _this;
 
+    [Header("Color Props")]
+    public Color defaultColor = Color.black;
+    public Color defaultPanelColor;
+    public Color highlightPanelColor;
+    public Color activePanelColor;
+
+    public Color defaultElementColor;
+    public Color activeElementColor;
+
+    public Color defaultTextColor;
+    public Color activeTextColor;
+
+    [Header("UI Prefabs")]
     public GameObject cardPrefab;
     public GameObject deckPrefab;
 
+    [Header("UI Links")]
     public Transform mainLayout;
     public CardGrid tableGrid;
-
-    [ContextMenuItem("Update", "UpdateEditLayout")]
     public Transform targetLayout;
 
+    [Header("Card Props")]
     public Vector2 cardScale;
     public Vector2 cardProportions;
     [ContextMenuItem("Update", "UpdateCardSize")]
@@ -39,6 +52,29 @@ public class UIManager : MonoBehaviour
     public static Transform GetMainLayout()
     {
         return _this.mainLayout;
+    }
+
+    public static Color GetColor(UIColor target)
+    {
+        switch(target)
+        {
+            case UIColor.DefaultPanel:
+                { return _this.defaultPanelColor; }
+            case UIColor.HighlightPanel:
+                { return _this.highlightPanelColor; }
+            case UIColor.ActivePanel:
+                { return _this.activePanelColor; }
+            case UIColor.DefaultElement:
+                { return _this.defaultElementColor; }
+            case UIColor.ActiveElement:
+                { return _this.activeElementColor; }
+            case UIColor.DefaultText:
+                { return _this.defaultTextColor; }
+            case UIColor.ActiveText:
+                {  return _this.activeTextColor; }
+            default:
+                { return _this.defaultColor; }
+        }
     }
 
     Vector2 GetElementScale(UIElement elem)
@@ -99,9 +135,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    [ContextMenu("Update")]
     void UpdateEditLayout()
     {
-        NormalizeLayout(targetLayout);
+        // NormalizeLayout(targetLayout);
     }
 
     void UpdateCardSize()
@@ -145,7 +182,7 @@ public class UIManager : MonoBehaviour
 
         _this = this;
 
-        NormalizeLayout(targetLayout);
+        // NormalizeLayout(targetLayout);
         UpdateCardSize();
 
         DontDestroyOnLoad(_this);

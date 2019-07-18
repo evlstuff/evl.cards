@@ -21,6 +21,7 @@ public class CardCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     public void OnBeginDrag(PointerEventData ev)
     {
+        GameManager.isCardGrabbed = true;
         siblingIndex = transform.GetSiblingIndex();
         parentCardGrid = transform.parent.GetComponent<CardGrid>();
         transform.SetParent(UIManager.GetMainLayout()); // put the card to layout
@@ -39,6 +40,7 @@ public class CardCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnEndDrag(PointerEventData ev)
     {
         CardGrid targetCardGrid = possibleCardGrid == null || !possibleCardGrid.canAddCard ? parentCardGrid : possibleCardGrid;
+        GameManager.isCardGrabbed = false;
 
         if (targetCardGrid != null)
         {

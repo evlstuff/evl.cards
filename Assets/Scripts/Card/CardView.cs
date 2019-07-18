@@ -17,11 +17,22 @@ public class CardView : MonoBehaviour
         card = GetComponent<Card>();
     }
 
+    Color RandomColor() {
+        Color color = Random.ColorHSV();
+        float minColorValue = .35f;
+
+        if (color.r < minColorValue || color.g < minColorValue || color.b < minColorValue) {
+            color = RandomColor();
+        }
+
+        return color;
+    }
+
     void Start()
     {
         if (image != null)
         {
-            image.color = Random.ColorHSV();
+            image.color = RandomColor();
         }
 
         if (card == null) return;
